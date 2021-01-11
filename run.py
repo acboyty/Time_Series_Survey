@@ -38,19 +38,19 @@ fp = open('result.txt', 'w')
 
 model = xgb.XGBRegressor(n_estimators=1000)
 test_y_hat = run_gbdt(model, train_X, train_y, val_X, val_y, test_X)
-fp.write(f'xgb >> MAPE: {MAPE(test_y, test_y_hat)}, sMAPE: {sMAPE(test_y, test_y_hat)}\n')
+fp.write(f'xgb >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
 
 # lgb
 
 model = lgb.LGBMRegressor(n_estimators=1000)
 test_y_hat = run_gbdt(model, train_X, train_y, val_X, val_y, test_X)
-fp.write(f'lgb >> MAPE: {MAPE(test_y, test_y_hat)}, sMAPE: {sMAPE(test_y, test_y_hat)}\n')
+fp.write(f'lgb >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
 
 # cat
 
 model = cat.CatBoostRegressor(verbose=10)
 test_y_hat = run_gbdt(model, train_X, train_y, val_X, val_y, test_X)
-fp.write(f'cat >> MAPE: {MAPE(test_y, test_y_hat)}, sMAPE: {sMAPE(test_y, test_y_hat)}\n')
+fp.write(f'cat >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
 
 # for NN methods
 train_X, train_y = np.log1p(train_X), np.log1p(train_y)  
