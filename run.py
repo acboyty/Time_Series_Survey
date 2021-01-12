@@ -25,8 +25,8 @@ torch.manual_seed(SEED)
 random.seed(SEED)
 
 
-X = np.loadtxt(os.path.join(DATASET_PATH, 'UCRArchive_2018/ACSF1/sample_X.txt'))
-y = np.loadtxt(os.path.join(DATASET_PATH, 'UCRArchive_2018/ACSF1/sample_Y.txt'))
+X = np.loadtxt(os.path.join(DATASET_PATH, 'M4/M4_ave_X.txt'))
+y = np.loadtxt(os.path.join(DATASET_PATH, 'M4/M4_ave_y.txt'))
 print(X.shape, y.shape)
 
 train_X, test_X, train_y, test_y = train_test_split(X, y, test_size=0.4, random_state=TRAIN_TEST_SPLIT_RANDOM_STATE)
@@ -34,35 +34,35 @@ val_X, test_X, val_y, test_y = train_test_split(test_X, test_y, test_size=0.5, r
 
 fp = open('result.txt', 'w')
 
-# xgb
+# # xgb
 
-model = xgb.XGBRegressor(n_estimators=10000)
-test_y_hat = run_gbdt(model, train_X, train_y, val_X, val_y, test_X)
-fp.write(f'xgb >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
+# model = xgb.XGBRegressor(n_estimators=10000)
+# test_y_hat = run_gbdt(model, train_X, train_y, val_X, val_y, test_X)
+# fp.write(f'xgb >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
 
-# lgb
+# # lgb
 
-model = lgb.LGBMRegressor(n_estimators=10000)
-test_y_hat = run_gbdt(model, train_X, train_y, val_X, val_y, test_X)
-fp.write(f'lgb >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
+# model = lgb.LGBMRegressor(n_estimators=10000)
+# test_y_hat = run_gbdt(model, train_X, train_y, val_X, val_y, test_X)
+# fp.write(f'lgb >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
 
-# cat
+# # cat
 
-model = cat.CatBoostRegressor(iterations=10000, verbose=10)
-test_y_hat = run_gbdt(model, train_X, train_y, val_X, val_y, test_X)
-fp.write(f'cat >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
+# model = cat.CatBoostRegressor(iterations=10000, verbose=10)
+# test_y_hat = run_gbdt(model, train_X, train_y, val_X, val_y, test_X)
+# fp.write(f'cat >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
 
 # for NN methods if the value are too large and > 0
-# train_X, train_y = np.log1p(train_X), np.log1p(train_y)  
-# val_X, val_y = np.log1p(val_X), np.log1p(val_y)
-# test_X, test_y = np.log1p(test_X), np.log1p(test_y)
+train_X, train_y = np.log1p(train_X), np.log1p(train_y)  
+val_X, val_y = np.log1p(val_X), np.log1p(val_y)
+test_X, test_y = np.log1p(test_X), np.log1p(test_y)
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 # device = torch.device('cpu')
 print(device)
 
 train_X, train_y = torch.Tensor(train_X), torch.Tensor(train_y)
-train_loader = DataLoader(TensorDataset(train_X, train_y), batch_size=128, shuffle=True)
+train_loader = DataLoader(TensorDataset(train_X, train_y), batch_size=1024, shuffle=True)
 val_X, val_y = torch.Tensor(val_X), torch.Tensor(val_y)
 # val_loader = DataLoader(TensorDataset(val_X, val_y), batch_size=128, shuffle=True)
 test_X, test_y = torch.Tensor(test_X), torch.Tensor(test_y)

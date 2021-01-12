@@ -20,7 +20,7 @@ def run_nbeats(model, train_loader, val_X, val_y, test_X, test_y, fp, device):
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, weight_decay=1e-6)
     criterion = nn.MSELoss().to(device)
 
-    for epoch in range(500):
+    for epoch in range(100):
         model.train()
         for idx, (batch_X, batch_y) in enumerate(train_loader):
             batch_X = batch_X.to(device)
@@ -43,8 +43,8 @@ def run_nbeats(model, train_loader, val_X, val_y, test_X, test_y, fp, device):
     model.eval()
     with torch.no_grad():
         _, test_y_hat = model(test_X)
-        # test_y, test_y_hat = torch.expm1(test_y), torch.expm1(test_y_hat.squeeze().to(torch.device('cpu')))
-        test_y, test_y_hat = test_y, test_y_hat.squeeze().to(torch.device('cpu'))
+        test_y, test_y_hat = torch.expm1(test_y), torch.expm1(test_y_hat.squeeze().to(torch.device('cpu')))
+        # test_y, test_y_hat = test_y, test_y_hat.squeeze().to(torch.device('cpu'))
         test_y, test_y_hat = test_y.numpy(), test_y_hat.numpy()
         fp.write(f'nbeats >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
     
@@ -55,7 +55,7 @@ def run_rnn(model, train_loader, val_X, val_y, test_X, test_y, fp, device):
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-6)
     criterion = nn.MSELoss().to(device)
 
-    for epoch in range(1000):
+    for epoch in range(200):
         model.train()
         for idx, (batch_X, batch_y) in enumerate(train_loader):
             batch_X = batch_X.unsqueeze(-1).permute(1, 0, 2).to(device)
@@ -78,8 +78,8 @@ def run_rnn(model, train_loader, val_X, val_y, test_X, test_y, fp, device):
     model.eval()
     with torch.no_grad():
         test_y_hat = model(test_X.unsqueeze(-1).permute(1, 0, 2).to(device))
-        # test_y, test_y_hat = torch.expm1(test_y), torch.expm1(test_y_hat.squeeze().to(torch.device('cpu')))
-        test_y, test_y_hat = test_y, test_y_hat.squeeze().to(torch.device('cpu'))
+        test_y, test_y_hat = torch.expm1(test_y), torch.expm1(test_y_hat.squeeze().to(torch.device('cpu')))
+        # test_y, test_y_hat = test_y, test_y_hat.squeeze().to(torch.device('cpu'))
         test_y, test_y_hat = test_y.numpy(), test_y_hat.numpy()
         fp.write(f'rnn >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
 
