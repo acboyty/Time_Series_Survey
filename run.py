@@ -25,8 +25,8 @@ torch.manual_seed(SEED)
 random.seed(SEED)
 
 
-X = np.loadtxt(os.path.join(DATASET_PATH, 'M4/M4_sample_X.txt'))
-y = np.loadtxt(os.path.join(DATASET_PATH, 'M4/M4_sample_y.txt'))
+X = np.loadtxt(os.path.join(DATASET_PATH, 'UCRArchive_2018/ShapesAll/sample_X.txt'))
+y = np.loadtxt(os.path.join(DATASET_PATH, 'UCRArchive_2018/ShapesAll/sample_Y.txt'))
 print(X.shape, y.shape)
 
 train_X, test_X, train_y, test_y = train_test_split(X, y, test_size=0.4, random_state=TRAIN_TEST_SPLIT_RANDOM_STATE)
@@ -36,26 +36,26 @@ fp = open('result.txt', 'w')
 
 # xgb
 
-model = xgb.XGBRegressor(n_estimators=1000)
+model = xgb.XGBRegressor(n_estimators=10000)
 test_y_hat = run_gbdt(model, train_X, train_y, val_X, val_y, test_X)
 fp.write(f'xgb >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
 
 # lgb
 
-model = lgb.LGBMRegressor(n_estimators=1000)
+model = lgb.LGBMRegressor(n_estimators=10000)
 test_y_hat = run_gbdt(model, train_X, train_y, val_X, val_y, test_X)
 fp.write(f'lgb >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
 
 # cat
 
-model = cat.CatBoostRegressor(verbose=10)
+model = cat.CatBoostRegressor(iterations=10000, verbose=10)
 test_y_hat = run_gbdt(model, train_X, train_y, val_X, val_y, test_X)
 fp.write(f'cat >> MAPE: {MAPE(test_y, test_y_hat):.5f}, sMAPE: {sMAPE(test_y, test_y_hat):.5f}\n')
 
-# for NN methods
-train_X, train_y = np.log1p(train_X), np.log1p(train_y)  
-val_X, val_y = np.log1p(val_X), np.log1p(val_y)
-test_X, test_y = np.log1p(test_X), np.log1p(test_y)
+# for NN methods if the value are too large and > 0
+# train_X, train_y = np.log1p(train_X), np.log1p(train_y)  
+# val_X, val_y = np.log1p(val_X), np.log1p(val_y)
+# test_X, test_y = np.log1p(test_X), np.log1p(test_y)
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 # device = torch.device('cpu')

@@ -20,7 +20,7 @@ def run_nbeats(model, train_loader, val_X, val_y, test_X, test_y, fp, device):
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, weight_decay=1e-6)
     criterion = nn.MSELoss().to(device)
 
-    for epoch in range(400):
+    for epoch in range(500):
         model.train()
         for idx, (batch_X, batch_y) in enumerate(train_loader):
             batch_X = batch_X.to(device)
