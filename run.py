@@ -25,8 +25,8 @@ torch.manual_seed(SEED)
 random.seed(SEED)
 
 
-X = np.loadtxt(os.path.join(DATASET_PATH, 'UCRArchive_2018/ShapesAll/sample_X.txt'))
-y = np.loadtxt(os.path.join(DATASET_PATH, 'UCRArchive_2018/ShapesAll/sample_Y.txt'))
+X = np.loadtxt(os.path.join(DATASET_PATH, 'UCRArchive_2018/ACSF1/sample_X.txt'))
+y = np.loadtxt(os.path.join(DATASET_PATH, 'UCRArchive_2018/ACSF1/sample_Y.txt'))
 print(X.shape, y.shape)
 
 train_X, test_X, train_y, test_y = train_test_split(X, y, test_size=0.4, random_state=TRAIN_TEST_SPLIT_RANDOM_STATE)
